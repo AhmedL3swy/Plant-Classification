@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tomato</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "poppins", sans-serif;
+        }
+
+
+        #containerr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #content h1 {
+            font-size: 3rem;
+            color: #3d1616;
+            text-align: center;
+        }
+
+        #content h2 {
+            font-size: 2rem;
+            color: #372e2e;
+            text-align: center;
+        }
+
+        #content {
+            text-align: center;
+
+        }
+
+        .main_box {
+            background-image: url(https://assets.pandaily.com/uploads/2020/09/smart-agriculture.jpg);
+            height: 100vh;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main_box">
+        <div id="containerr">
+            <div id="content">
+                <h1>Revolutionizing Agriculture Through Precision and Insight</h1>
+                <h2> Empowering Farmers with Cutting-Edge Technology.</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageUploadModal">
+                    Test
+                </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="imageUploadModal" tabindex="-1" aria-labelledby="imageUploadModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageUploadModalLabel">Upload Your Crop Image</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="file" name="image" id="imageInput" accept="image/*">
+                        <button class="btn btn-primary" onclick="uploadImage()">Upload And Test</button>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div id="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script>
+            function uploadImage() {
+                var fileInput = document.getElementById('imageInput');
+                var progressBar = document.getElementById('progressBar');
+                var file = fileInput.files[0];
+                // Fill the progress bar during upload
+                var xhr = new XMLHttpRequest();
+                // Set Progress bar to 100
+                
+                var formData = new FormData();
+
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '/predict/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        var resultDiv = document.getElementById('result');
+                        //Empty the result div
+                        resultDiv.innerHTML = '';
+                        // Create a new image element
+                        var img = document.createElement('img');
+                        // Set the source of the image to the response image
+                        img.src = "images/" + response.filename;
+                        // Append the image to the result div
+                        resultDiv.appendChild(img);
+                        // Create a new paragraph element
+                        var p = document.createElement('p');
+                        // Set the inner text of the paragraph to the response prediction
+                        p.innerText = "Result:\n" +response.prediction;
+                        // Append the paragraph to the result div
+                        resultDiv.appendChild(p);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        </script>
+
+
+</body>
+
+</html>
